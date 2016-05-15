@@ -13,7 +13,7 @@
 struct entry
 {
     const char* name;
-    unsigned long  val;
+    long  val;
 };
 
 #define SIZE_MEMINFO 45
@@ -124,18 +124,90 @@ int parse_meminfo()
     close(fd);
 }
 
+enum {
+    DIRTY_EXPIRE_CENTISECS = 0,
+    DIRTY_WRITEBACK_CENTISECS,
+    DIR_RATIO,
+    DIRTY_BACKGROUND_RATIO,
+    MIN_FREE_KBYTES,
+    VFS_CACHE_PRESSURE,
+    SWAPPINESS,
+    NR_FDS
+};
 
+
+
+struct entry vmfds[NR_FDS] = {
+    {"/proc/sys/vm/dirty_expire_centisecs",    -1},
+    {"/proc/sys/vm/dirty_writeback_centisecs", -1},
+    {"/proc/sys/vm/dirty_ratio",               -1},
+    {"/proc/sys/vm/dirty_background_ratio",   -1},
+    {"/proc/sys/vm/min_free_kbytes",           -1},
+    {"/proc/sys/vm/vfs_cache_pressure",        -1},
+    {"/proc/sys/vm/swappiness",                -1}
+};
+
+
+
+int selet_vm_data()
+{
+    //TBD: select vm_data according to the free memory status
+}
+
+
+int get_vm_data(struct entry vmfds[])
+{
+    char data[64];
+    unsigned long val;
+
+    for(int i; i < NR_FDS; i++){
+	vmfds[i].val = open(vmfds[i].name, O_RDWR);
+	if(vmfds[i].val < 0){
+	    printf("fail to open file %s: %ld\n", vmfds[i].name, vmfds[i].val);
+	    return -1;
+	}
+	//printf("%s:%ld\n", vmfds[i].name, vmfds[i].val);
+    }
+    printf("all vm files open succeeded\n");
+
+    
+    for(int i; i < NR_FDS; i++){
+	memset(data, 0, 64);
+	//fscanf(vmfds[i].val, "%d", &val);
+	if(read(vmfds[i].val, data, 64) <= 0){
+	    printf("file %s reads failure\n", vmfds[i].name);
+	    return -1;
+	}
+	sscanf(data, "%ld", &val);
+	printf("_%s: %ld\n", vmfds[i].name, val);
+    }
+
+    for(int i; i < NR_FDS; i++){    
+	if(vmfds[i].val >= 0)
+	    close(vmfds[i].val);
+    }
+
+
+}
+
+
+
+int reconfig_vmfds()
+{
+    //TBD: inject new config datas through sysctl.vm
+}
 
 
 int main()
 {
     unsigned long free;
-    while(1){	
+    
+    while(1){
 	parse_meminfo();
 	free = meminfo[MEMFREE].val + meminfo[CACHED].val;
 	printf("free: %ld(F) + %ld(C) = %ld MB\n", meminfo[MEMFREE].val/1024, meminfo[CACHED].val/1024, free/1024);
+	get_vm_data(vmfds);
 	sleep(1);
     }
-    
     return 0;
 }
