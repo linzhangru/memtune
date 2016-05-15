@@ -167,10 +167,29 @@ struct entry vmfds[NR_FDS] = {
 
 
 
-int select_vm_data()
+#define NUM_OF_THRESHOLDS 3
+#define THRESHOLD_0 1024
+#define THRESHOLD_1 896
+#define THRESHOLD_2 512
+int free_mem_thresholds[NUM_OF_THRESHOLDS] = {
+    THRESHOLD_0,
+    THRESHOLD_1,
+    THRESHOLD_2
+};
+
+int select_vm_data(int free)
 {
     //TBD: select vm_data according to the free memory status
-    return 0;
+    //     and eMMC loading ==> not yet finished
+    int thres;
+    if(free/1024 > THRESHOLD_0)
+	return 0;
+    else if(free/1024 > THRESHOLD_1)
+	return 1;
+    else if(free/1024 > THRESHOLD_2)
+	return 2;
+    else
+	return 0;  //TBD: consider about more vm configration choices
 }
 
 
@@ -247,6 +266,9 @@ int reconfig_vmfds(long * newvals)
 }
 
 
+    
+
+
 int main()
 {
     unsigned long free;
@@ -259,7 +281,7 @@ int main()
 	parse_meminfo();
 	free = meminfo[MEMFREE].val + meminfo[CACHED].val;
 	printf("free: %ld(F) + %ld(C) = %ld MB\n", meminfo[MEMFREE].val/1024, meminfo[CACHED].val/1024, free/1024);
-	choice = select_vm_data();
+	choice = select_vm_data(free);
 	reconfig_vmfds(config_val[choice]);    
 	get_vm_data(vmfds);
 	sleep(1);
