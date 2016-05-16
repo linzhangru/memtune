@@ -16,10 +16,10 @@ int main()
     }
     
     
-    //TBD: mmap test
+    //TBD: mmap test --> time accounting, mmap write munmap again and again
 
 
-    //TBD: file read/write
+    //TBD: file read/write --> time accounting, file file read/write again and again
     
 }
 
