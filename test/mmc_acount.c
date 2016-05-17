@@ -29,6 +29,7 @@ int main()
     
     //TBD: malloc test: different size/times --> time accounting, wirte again and again
     //1G in total/1k each time
+    //randomize the size of malloc, to preven the effect of free list in dlmalloc
     for(i = 0; i < ALLOC_TIMES; i+= 1){	
 	gettimeofday(&tv, &tz);
 	t1 = tv.tv_sec*1000000+tv.tv_usec;
