@@ -3,7 +3,7 @@
 #include <sys/time.h>
 #include <string.h>
 #include <sys/mman.h>
-
+#include <malloc.h>
 
 //struct timeval 
 //{
@@ -47,8 +47,10 @@ int main()
     for(i = 0; i < ALLOC_TIMES; i+= 1){
 	munlock(p[i], size);
 	free(p[i]);
-    }
-    
+	if(!malloc_trim(size)){
+	    printf("\nmalloc_trim fail!");
+	}
+    }    
     
     //TBD: mmap test --> time accounting, mmap write munmap again and again
 
