@@ -144,13 +144,13 @@ enum {
 /proc/sys/vm/dirty_background_ratio:      10 -->    20 -->    30 
 /proc/sys/vm/min_free_kbytes:           5624 --> 28120 --> 56240 
 /proc/sys/vm/vfs_cache_pressure:         100 -->   150 -->   200
-/proc/sys/vm/swappiness:                  60 -->    40 -->    10
+/proc/sys/vm/swappiness:                  60 -->    65 -->    70
 */
 
 long config_val[3][7] = {
     {3000, 500, 20, 10,  5624, 100, 60},
-    {2000, 400, 15, 20, 28120, 150, 40},
-    {1000, 300, 10, 30, 56240, 200, 10},
+    {2000, 400, 15, 20, 28120, 150, 65},
+    {1000, 300, 10, 30, 56240, 200, 70},
 };
 
     
