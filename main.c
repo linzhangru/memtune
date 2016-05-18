@@ -177,20 +177,6 @@ int free_mem_thresholds[NUM_OF_THRESHOLDS] = {
     THRESHOLD_2
 };
 
-int select_vm_data(int free)
-{
-    //TBD: select vm_data according to the free memory status
-    //     and eMMC loading ==> not yet finished
-    int thres;
-    if(free/1024 > THRESHOLD_0)
-	return 0;
-    else if(free/1024 > THRESHOLD_1)
-	return 1;
-    else if(free/1024 > THRESHOLD_2)
-	return 2;
-    else
-	return 0;  //TBD: consider about more vm configration choices
-}
 
 
 int get_vm_data(struct entry vmfds[])
@@ -202,7 +188,7 @@ int get_vm_data(struct entry vmfds[])
 	vmfds[i].val = open(vmfds[i].name, O_RDWR);
 	if(vmfds[i].val < 0){
 	    printf("fail to open file %s: %ld\n", vmfds[i].name, vmfds[i].val);
-	    return -1;
+	    return -1;//FIXME: file should be closed before return
 	}
 	//printf("%s:%ld\n", vmfds[i].name, vmfds[i].val);
     }
@@ -214,7 +200,7 @@ int get_vm_data(struct entry vmfds[])
 	//fscanf(vmfds[i].val, "%d", &val);
 	if(read(vmfds[i].val, data, 64) <= 0){
 	    printf("file %s reads failure\n", vmfds[i].name);
-	    return -1;
+	    return -1;//FIXME: file should be closed before return
 	}
 	sscanf(data, "%ld", &val);
 	printf("_%s: %ld\n", vmfds[i].name, val);
@@ -239,7 +225,7 @@ int reconfig_vmfds(long * newvals)
 	vmfds[i].val = open(vmfds[i].name, O_RDWR);
 	if(vmfds[i].val < 0){
 	    printf("fail to open file %s: %ld\n", vmfds[i].name, vmfds[i].val);
-	    return -1;
+	    return -1;//FIXME: file should be closed before return
 	}
 	//printf("%s:%ld\n", vmfds[i].name, vmfds[i].val);
     }
@@ -251,7 +237,7 @@ int reconfig_vmfds(long * newvals)
 	snprintf(data, sizeof(newvals[i]), "%ld\n", newvals[i]);
 	if(write(vmfds[i].val, data, sizeof(data)) <= 0){
 	    printf("file %s writes failure\n", vmfds[i].name);
-	    return -1;
+	    return -1; //FIXME: file should be closed before return
 	}
 	//printf("_%s: %ld\n", vmfds[i].name, val);
     }    
@@ -266,7 +252,103 @@ int reconfig_vmfds(long * newvals)
 }
 
 
+//TBD: "/sys/block/sdb/stat" is to be replaced by  "/sys/block/mmcblk0"
+//     they have the same out put format:
+#define EMMC_DEV_STAT "/sys/block/sdb/stat"   //"/sys/block/mmcblk0"
+struct block_stat {
+    int num_ird;    //1.number of issued reads
+    int num_rdm;    //2.number of reads merged
+    int num_scr;    //3.number of sectors read
+    int num_msr;    //4.number of milliseconds spent reading
+    int num_wcp;    //5.number of writes completed
+    int num_mrw;    //6.number of writes merged Reads and writes which are adjacent to each other may be merged for efficiency
+    int num_scw;    //7.number of sectors written
+    int num_msw;    //8.number of milliseconds spent writing This is the total number of milliseconds spent by all writes
+    int num_ioc;    //9.number of I/Os currently in progress.
+    int num_cms;    //10.number of milliseconds spent doing I/Os.
+    int num_wms;    //11.number of milliseconds spent doing I/Os, weighted.
+};
+
+
+
+//this is the struct from iostat command, dump it here for algorithm clarify
+#if 0
+struct io_stats {
+    /* num of sectors read */
+    unsigned long rd_sectors        __attribute__ ((aligned (8))); // 3. num_scr
+    /* num of sectors written */
+    unsigned long wr_sectors        __attribute__ ((packed));      // 7. num_scw
+    /* num of read operations issued to the device */
+    unsigned long rd_ios            __attribute__ ((packed));      // 1. num_ird
+    /* num of read requests merged */
+    unsigned long rd_merges         __attribute__ ((packed));      // 2. num_rdm
+    /* num of write operations issued to the device */
+    unsigned long wr_ios            __attribute__ ((packed));      // 5. num_wcp
+    /* num of write requests merged */
+    unsigned long wr_merges         __attribute__ ((packed));      // 6. num_mrw
+    /* Time of read requests in queue */
+    unsigned int  rd_ticks          __attribute__ ((packed));      // 4. num_msr
+    /* Time of write requests in queue */
+    unsigned int  wr_ticks          __attribute__ ((packed));      // 8. num_msw
+    /* num of I/Os in progress */
+    unsigned int  ios_pgr           __attribute__ ((packed));      // 9. num_ioc
+    /* num of ticks total (for this device) for I/O */
+    unsigned int  tot_ticks         __attribute__ ((packed));      //10. num_cms
+    /* num of ticks requests spent in queue */
+    unsigned int  rq_ticks          __attribute__ ((packed));      //11. num_wms
+};
+#endif                                                                                                                                                                                
+
+
+struct block_stat blkst;
+
+int get_emmc_stat()
+{
+    int fd;
+    char data[128];
     
+    fd = open(EMMC_DEV_STAT, O_RDONLY);
+    if(fd < 0){
+	printf("%s open failure\n", EMMC_DEV_STAT);
+	return -1;
+    }
+
+    if(read(fd, data, 128) <= 0){
+	printf("%s read failure\n", EMMC_DEV_STAT);
+	close(fd);
+	return -1;
+    }
+    sscanf(data, "%d %d %d %d %d %d %d %d %d %d %d", &blkst.num_ird,
+	   &blkst.num_rdm, &blkst.num_scr, &blkst.num_msr, &blkst.num_wcp, &blkst.num_mrw,
+	   &blkst.num_scw, &blkst.num_msw, &blkst.num_ioc, &blkst.num_cms, &blkst.num_wms);
+    printf("%d %d %d %d %d %d %d %d %d %d %d\n", blkst.num_ird,
+	   blkst.num_rdm, blkst.num_scr, blkst.num_msr, blkst.num_wcp, blkst.num_mrw,
+	   blkst.num_scw, blkst.num_msw, blkst.num_ioc, blkst.num_cms, blkst.num_wms);
+    
+    close(fd);
+    return 0;
+}
+
+
+int select_vm_data(int free)
+{
+    //TBD: select vm_data according to the free memory status
+    //     and eMMC loading ==> not yet finished
+
+    get_emmc_stat();
+    
+    int thres;
+    if(free/1024 > THRESHOLD_0)
+	return 0;
+    else if(free/1024 > THRESHOLD_1)
+	return 1;
+    else if(free/1024 > THRESHOLD_2)
+	return 2;
+    else
+	return 0;  //TBD: consider about more vm configration choices
+}
+
+
 
 
 int main()
@@ -274,7 +356,10 @@ int main()
     unsigned long free;
     int choice;
     int sec = 0;
+
+    //get_emmc_stat();
     
+#if 1   
     while(1){
 	printf("============================\n"
 	       "seconds:%d, choice:%d\n", sec++, choice);
@@ -286,5 +371,6 @@ int main()
 	get_vm_data(vmfds);
 	sleep(1);
     }
+#endif    
     return 0;
 }

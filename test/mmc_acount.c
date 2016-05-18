@@ -12,8 +12,10 @@
 //};
 
 
-#define ALLOC_SIZE  1024*1024*1024UL   //1G
-#define ALLOC_TIMES 32
+#define ALLOC_SIZE  (1024*1024*1024UL)   //1G
+#define ALLOC_TIMES (1024)
+
+char * p[ALLOC_TIMES];
 
 int main()
 {
@@ -23,7 +25,8 @@ int main()
     long int t1, t2;
     long int size = ALLOC_SIZE/ALLOC_TIMES;
     //char * p;
-    char * p[ALLOC_TIMES];
+
+    printf("size:%ld MB\n", (long int)(size/1024/1024.0));
     
     //mlockall(MCL_CURRENT|MCL_FUTURE);
     
@@ -48,7 +51,7 @@ int main()
 	munlock(p[i], size);
 	free(p[i]);
 	if(!malloc_trim(size)){
-	    printf("\nmalloc_trim fail!");
+	    //printf("\nmalloc_trim fail!");
 	}
     }    
     
