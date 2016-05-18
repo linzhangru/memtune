@@ -12,7 +12,7 @@
 //};
 
 
-#define ALLOC_SIZE  1024*1024*1024   //1G
+#define ALLOC_SIZE  1024*1024*1024UL   //1G
 #define ALLOC_TIMES 32
 
 int main()
@@ -21,7 +21,7 @@ int main()
     struct timeval  tv;
     struct timezone tz;
     long int t1, t2;
-    int size = ALLOC_SIZE/ALLOC_TIMES;
+    long int size = ALLOC_SIZE/ALLOC_TIMES;
     //char * p;
     char * p[ALLOC_TIMES];
     
@@ -35,8 +35,8 @@ int main()
 	t1 = tv.tv_sec*1000000+tv.tv_usec;
 	//printf("%8d: [%ld, %ld]\n", i, tv.tv_sec, tv.tv_usec);
 	p[i] = malloc(size);
-	memset(p[i], 0x5a5a5a5a, size);
 	mlock(p[i], size);
+	memset(p[i], 0x5a5a5a5a, size);
 	gettimeofday(&tv, &tz);
 	t2 = tv.tv_sec*1000000+tv.tv_usec;
 	//printf("%8d: [%ld, %ld]\n", i, tv.tv_sec, tv.tv_usec);
