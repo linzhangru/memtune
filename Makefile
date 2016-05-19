@@ -14,6 +14,22 @@ CPPFLAGS += $(INC_PARAMS)
 export CFLAGS
 export CPPFLAGS
 
+
+
+ifeq ($(ARCH), x86)
+CC = gcc
+AR = ar
+#select arm64 compiler in else 
+else
+CC =
+AR = 
+endif
+
+LD=$(CC)
+
+export CC
+export LD
+
 .PHONY: all
 
 all:
