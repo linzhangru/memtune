@@ -329,6 +329,51 @@ int get_emmc_stat()
     return 0;
 }
 
+#define HZ hz
+long int hz = 0;
+//get the number of ticks per second
+void get_hz(void)
+{
+    long ticks;
+    if ((ticks = sysconf(_SC_CLK_TCK)) == -1) {
+	perror("sysconf");
+    }
+    hz = (unsigned int) ticks;
+}
+    
+
+#define UPTIME "/proc/uptime"
+unsigned long uptime;
+
+int get_uptime()
+{
+    int fd;
+    char data[64];
+    unsigned long up_sec, up_csec;
+
+    if(!hz){
+	printf("HZ val not yet initialized\n");
+	return -1;
+    }
+    
+    fd = open(UPTIME, O_RDONLY);
+    if(fd < 0){
+	printf("open %s failure\n", UPTIME);
+	return -1;
+    }
+    if(read(fd, data, 64) <= 0){
+	printf("read %s failure\n", UPTIME);
+	return -1;
+    }
+    sscanf(data, "%lu.%lu", &up_sec, &up_csec);
+    uptime = up_sec*HZ + up_csec*HZ/100;
+    
+    printf("%s, up_sec:%ld, up_csec:%ld, uptime:%ld, HZ:%ld\n", data, up_sec, up_csec, uptime, HZ);
+
+    close(fd);
+}
+
+
 
 int select_vm_data(int free)
 {
@@ -357,9 +402,13 @@ int main()
     int choice;
     int sec = 0;
 
+    get_hz();
+    get_uptime();
+
+    
     //get_emmc_stat();
     
-#if 1   
+#if 0
     while(1){
 	printf("============================\n"
 	       "seconds:%d, choice:%d\n", sec++, choice);
