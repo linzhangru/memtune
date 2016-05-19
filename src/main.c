@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "include/meminfo.h"
+#include "meminfo.h"
 
 unsigned long long get_uptime();
 
