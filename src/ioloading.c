@@ -28,10 +28,11 @@ int get_emmc_stat(int i)
     sscanf(data, "%d %d %d %d %d %d %d %d %d %d %d", &blkst[i].num_ird,
 	   &blkst[i].num_rdm, &blkst[i].num_scr, &blkst[i].num_msr, &blkst[i].num_wcp, &blkst[i].num_mrw,
 	   &blkst[i].num_scw, &blkst[i].num_msw, &blkst[i].num_ioc, &blkst[i].num_cms, &blkst[i].num_wms);
+/*
     printf("%d %d %d %d %d %d %d %d %d %d %d\n", blkst[i].num_ird,
 	   blkst[i].num_rdm, blkst[i].num_scr, blkst[i].num_msr, blkst[i].num_wcp, blkst[i].num_mrw,
 	   blkst[i].num_scw, blkst[i].num_msw, blkst[i].num_ioc, blkst[i].num_cms, blkst[i].num_wms);
-    
+*/
     close(fd);
     return 0;
 }
@@ -74,7 +75,7 @@ unsigned long long get_uptime()
     sscanf(data, "%llu.%llu", &up_sec, &up_csec);
     uptime = up_sec*HZ + up_csec*HZ/100;
     
-    printf("%s, up_sec:%lld, up_csec:%lld, uptime:%lld, HZ:%ld\n", data, up_sec, up_csec, uptime, HZ);
+    //printf("%s, up_sec:%lld, up_csec:%lld, uptime:%lld, HZ:%ld\n", data, up_sec, up_csec, uptime, HZ);
     close(fd);
 
     return uptime;
@@ -99,7 +100,7 @@ void switch_cur(){
 #define LOADING_RD_THRES  200
 #define LOADING_WR_THRES  200
 
-#define FCTR 2048;
+#define FCTR 2048; //MBps
     
 
 int get_io_loading()
@@ -118,10 +119,10 @@ int get_io_loading()
 	interval = blkst[i].stp - blkst[j].stp;
     }
 
-    printf("%d: %d,%d\n", i, blkst[i].num_scr, blkst[i].num_scw);
-    printf("%d: %d,%d\n", j, blkst[j].num_scr, blkst[j].num_scw);
+    //printf("%d: %d,%d\n", i, blkst[i].num_scr, blkst[i].num_scw);
+    //printf("%d: %d,%d\n", j, blkst[j].num_scr, blkst[j].num_scw);
 
-    printf("interval:%d\n", interval);
+    printf("interval:%8.2f sec\n", ((double)interval)/HZ);
     
     ldr = (double)((blkst[i].num_scr - blkst[j].num_scr)*HZ)/interval/FCTR;
     ldw = (double)((blkst[i].num_scw - blkst[j].num_scw)*HZ)/interval/FCTR;

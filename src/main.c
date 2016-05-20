@@ -82,7 +82,7 @@ int get_vm_data(struct entry vmfds[])
 	}
 	//printf("%s:%ld\n", vmfds[i].name, vmfds[i].val);
     }
-    printf("all vm files open succeeded\n");
+    //printf("%s all vm files open succeeded\n", __func__);
 
     
     for(int i; i < NR_FDS; i++){
@@ -100,7 +100,7 @@ int get_vm_data(struct entry vmfds[])
 	if(vmfds[i].val >= 0)
 	    close(vmfds[i].val);
     }
-    printf("all vm files closed\n");
+    //printf("%s all vm files closed\n", __func__);
     return 0;
 }
 
@@ -120,7 +120,7 @@ int reconfig_vmfds(long * newvals)
 	}
 	//printf("%s:%ld\n", vmfds[i].name, vmfds[i].val);
     }
-    printf("all vm files open succeeded\n");
+    //printf("%s all vm files open succeeded\n", __func__);
 
 
     for(int i; i < NR_FDS; i++){
@@ -138,7 +138,7 @@ int reconfig_vmfds(long * newvals)
 	if(vmfds[i].val >= 0)
 	    close(vmfds[i].val);
     }
-    printf("all vm files closed\n");
+    //printf("%s all vm files closed\n", __func__);
     return 0;
 }
 
