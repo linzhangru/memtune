@@ -45,5 +45,6 @@ export TARGET
 all:
 	make -C ./src x86-all
 clean:
-	find -iname *.o | xargs rm -f
+	find -iname "*.o" | xargs rm -f
+	find -iname "*~" | xargs rm -f
 	rm -f $(TARGET)
