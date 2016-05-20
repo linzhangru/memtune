@@ -2,12 +2,18 @@
 
 x86-all: perft
 
-main.o: main.c
-meminfo.o: meminfo.c 
-ioloading.o: ioloading.c
-perft: main.o meminfo.o ioloading.o
 
 
+
+SOURCES := main.c meminfo.c ioloading.c
+OBJECTS := $(patsubst %.c,%.o,$(filter %.c,$(SOURCES)))  
+
+$(info LD_LIBRARY_PATH:$(LD_LIBRARY_PATH))
+
+
+$(TARGET): $(OBJECTS)
+	$(CC) $^ -o $@ $(LDFLAGS)
+	mv $(TARGET) ../
 
 %.o: %.c
 	$(CC) -Wall $(CFLAGS) $(INC_PARAMS)  -c $< -o $@

@@ -47,4 +47,10 @@ struct io_stats {
     unsigned int  rq_ticks          __attribute__ ((packed));      //11. num_wms
 };
 #endif                                                                                                                                                                           
+
+extern unsigned long long get_uptime();
+extern int get_io_loading();
+extern void iostat_init();
+
+
 #endif

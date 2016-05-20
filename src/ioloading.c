@@ -136,3 +136,11 @@ int get_io_loading()
     }
 }
 
+
+void iostat_init()
+{
+    get_hz();
+    get_emmc_stat(get_cur());
+}
+
+

@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "meminfo.h"
 
@@ -62,8 +63,6 @@ int parse_meminfo()
     char data[4096];
     char * pline;
     char tmp[32];
-    int szfree, szbuffer, szcache;
-    int val;
     
     int i;
     
@@ -83,7 +82,6 @@ int parse_meminfo()
     
 
     for(i = 0; i < NUM_ENTRY; i++){
-	char tmp[64] = {0};
 	pline = NULL;
 	//pline = strstr(data, "MemFree:");
 	pline = strstr(data, meminfo[i].name);
@@ -98,4 +96,5 @@ int parse_meminfo()
     //printf("%s\n", data);
 
     close(fd);
+    return 0;
 }
