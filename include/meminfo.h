@@ -2,11 +2,7 @@
 #define __MEMINFO__
 
 
-struct entry
-{
-    const char* name;
-    long  val;
-};
+#include "dtype.h"
 
 #define SIZE_MEMINFO 45
 #define INVALID_VAL  (-1)
