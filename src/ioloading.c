@@ -122,12 +122,12 @@ int get_io_loading()
     //printf("%d: %d,%d\n", i, blkst[i].num_scr, blkst[i].num_scw);
     //printf("%d: %d,%d\n", j, blkst[j].num_scr, blkst[j].num_scw);
 
-    printf("interval:%8.2f sec\n", ((double)interval)/HZ);
+    printf("interval:%5.2f sec\n", ((double)interval)/HZ);
     
     ldr = (double)((blkst[i].num_scr - blkst[j].num_scr)*HZ)/interval/FCTR;
     ldw = (double)((blkst[i].num_scw - blkst[j].num_scw)*HZ)/interval/FCTR;
 
-    printf("ldr:%8.2f, ldw:%8.2f\n", ldr, ldw);
+    printf("ldr:%5.2f MBps, ldw:%5.2f MBps\n", ldr, ldw);
     
     //TBD: current algorithm of deciding high loading is the be improved
     if(ldr > LOADING_RD_THRES || ldw > LOADING_WR_THRES) {

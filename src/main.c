@@ -11,48 +11,6 @@
 #include "ioloading.h"
 #include "sysctlvm.h"
 
-//unsigned long long get_uptime();
-
-
-
-
-
-
-#define NUM_OF_THRESHOLDS 3
-#define THRESHOLD_0 1024
-#define THRESHOLD_1 896
-#define THRESHOLD_2 512
-int free_mem_thresholds[NUM_OF_THRESHOLDS] = {
-    THRESHOLD_0,
-    THRESHOLD_1,
-    THRESHOLD_2
-};
-
-
-
-
-
-int select_vm_data(int free)
-{
-    //TBD: select vm_data according to the free memory status
-    //     and eMMC loading ==> not yet finished
-    int io_loading_high;
-    //int thres;
-
-    io_loading_high = get_io_loading();
-    
-    if(free/1024 > THRESHOLD_0)
-	return 0;
-    //trigger page reclaim when io loading is not high
-    else if((free/1024 > THRESHOLD_1) && !io_loading_high)
-	return 1;
-    //trigger page reclaim when io loading is not high
-    else if((free/1024 > THRESHOLD_2) && !io_loading_high)
-	return 2;
-    else
-	return 0;  //TBD: consider about more vm configration choices
-}
-
 
 
 

@@ -37,7 +37,7 @@ export LD
 export AR
 
 
-TARGET  := perft
+TARGET  := mma
 export TARGET
 
 .PHONY: all clean
@@ -46,5 +46,7 @@ all:
 	make -C ./src x86-all
 clean:
 	find -iname "*.o" | xargs rm -f
-	find -iname "*~" | xargs rm -f
+	find -iname "*~"  | xargs rm -f
+	find -iname "cscope*" | xargs rm -rf
+	find -iname "*#*" | xargs rm -rf
 	rm -f $(TARGET)

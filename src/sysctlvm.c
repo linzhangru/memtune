@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "meminfo.h"
+#include "ioloading.h"
 #include "sysctlvm.h"
 
 
@@ -19,12 +21,19 @@
 /proc/sys/vm/swappiness:                  60 -->    65 -->    70
 */
 
+#if 0
 long config_val[3][7] = {
     {3000, 500, 20, 10,  5624, 100, 60},
     {2000, 400, 15, 20, 28120, 150, 65},
     {1000, 300, 10, 30, 56240, 200, 70},
 };
-
+#else
+long config_val[3][7] = {
+    {3000, 500, 20, 10, 5624, 100, 60},
+    {3000, 400, 15, 20, 5624, 100, 60},
+    {3000, 300, 10, 30, 5624, 100, 60},
+};
+#endif
 
     
 
@@ -115,4 +124,65 @@ int reconfig_vmfds(int choice)
     return 0;
 }
 
+
+
+#define NUM_OF_THRESHOLDS 3
+#define THRESHOLD_0 1024
+#define THRESHOLD_1 896
+#define THRESHOLD_2 512
+
+enum choice_t {
+    CHOICE_0,
+    CHOICE_1,
+    CHOICE_2
+};
+
+
+
+
+int select_vm_data(int free)
+{
+    //TBD: select vm_data according to the free memory status
+    //     and eMMC loading ==> not yet finished
+#if 0    
+    int io_loading_high;
+    io_loading_high = get_io_loading();
+    
+    if(free/1024 > THRESHOLD_0)
+	return 0;
+    //trigger page reclaim when io loading is not high
+    else if((free/1024 > THRESHOLD_1) && !io_loading_high)
+	return 1;
+    //trigger page reclaim when io loading is not high
+    else if((free/1024 > THRESHOLD_2) && !io_loading_high)
+	return 2;
+    else
+	return 0;  //TBD: consider about more vm configration choices
+#else
+    enum choice_t selection = CHOICE_0;
+    int val;
+    char data[32];
+    int fd = open("selection", O_RDONLY);
+    if(fd < 0){
+	printf("fail to open file selection\n");
+	return CHOICE_0;
+    }
+    if(read(fd, data, sizeof(data)) < 0){
+	goto out;
+    }
+    sscanf(data, "%d", &val);
+    if(val > CHOICE_2 || val < CHOICE_0){
+	printf("wrong selection val, pls change val in file selection between [%d, %d]\n", CHOICE_0, CHOICE_2);
+	selection = CHOICE_0;
+    } else {
+	selection = val;
+    }
+    
+    printf("selection : %d\n", selection);
+out:    
+    close(fd);
+    return selection;
+#endif
+    
+}
 

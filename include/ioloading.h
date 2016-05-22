@@ -3,7 +3,7 @@
 
 //TBD: "/sys/block/sdb/stat" is to be replaced by  "/sys/block/mmcblk0"
 //     they have the same out put format:
-#define EMMC_DEV_STAT "/sys/block/sdb/stat"   //"/sys/block/mmcblk0"
+#define EMMC_DEV_STAT "/sys/block/sda/stat"   //"/sys/block/mmcblk0"
 struct io_stat {
     int num_ird;    //1.number of issued reads
     int num_rdm;    //2.number of reads merged

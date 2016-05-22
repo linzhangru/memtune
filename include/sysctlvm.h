@@ -17,5 +17,6 @@ enum {
 
 extern int get_vm_data();
 extern int reconfig_vmfds(int choice);
+extern int select_vm_data(int free);
 
 #endif

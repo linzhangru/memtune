@@ -1,6 +1,6 @@
 
 
-x86-all: perft
+x86-all: $(TARGET)
 
 
 
