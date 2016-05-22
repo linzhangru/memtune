@@ -89,10 +89,11 @@ int main()
 
 #else
     int val;
-
-    val = rand();
-    printf("rand: %d", val);
-
+    int i;
+    for(i = 0; i < 10; i++){
+	val = rand();
+	printf("rand: %d\n", val);
+    }
 #endif
 
     
