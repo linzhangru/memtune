@@ -40,13 +40,17 @@ export AR
 TARGET  := mma
 export TARGET
 
-.PHONY: all clean
+.PHONY: all test clean
 
 all:
 	make -C ./src x86-all
+
+test:
+	make -C ./test mmc
+
 clean:
 	find -iname "*.o" | xargs rm -f
 	find -iname "*~"  | xargs rm -f
 	find -iname "cscope*" | xargs rm -rf
 	find -iname "*#*" | xargs rm -rf
-	rm -f $(TARGET)
+	rm -f $(TARGET) test/mmc
