@@ -89,45 +89,6 @@ int free_or_not()
 
 int main()
 {
-
-#if 0    
-    int i;
-    struct timeval  tv;
-    struct timezone tz;
-    long int t1, t2;
-    long int size = ALLOC_SIZE/ALLOC_TIMES;
-    //char * p;
-    
-    printf("size:%ld MB\n", (long int)(size/1024/1024.0));
-    
-    //mlockall(MCL_CURRENT|MCL_FUTURE);
-    
-    //TBD: malloc test: different size/times --> time accounting, wirte again and again
-    //1G in total/1k each time
-    //randomize the size of malloc, to preven the effect of free list in dlmalloc
-    for(i = 0; i < ALLOC_TIMES; i+= 1){	
-	gettimeofday(&tv, &tz);
-	t1 = tv.tv_sec*1000000+tv.tv_usec;
-	//printf("%8d: [%ld, %ld]\n", i, tv.tv_sec, tv.tv_usec);
-	p[i] = malloc(size);
-	mlock(p[i], size);
-	memset(p[i], 0x5a5a5a5a, size);
-	gettimeofday(&tv, &tz);
-	t2 = tv.tv_sec*1000000+tv.tv_usec;
-	//printf("%8d: [%ld, %ld]\n", i, tv.tv_sec, tv.tv_usec);
-	printf("%ld, ", t2-t1);
-    }
-
-    //munlockall();
-    for(i = 0; i < ALLOC_TIMES; i+= 1){
-	munlock(p[i], size);
-	free(p[i]);
-	if(!malloc_trim(size)){
-	    //printf("\nmalloc_trim fail!");
-	}
-    }
-
-#else
     int szidx;
     int i;
     struct timeval  tv;
@@ -141,14 +102,17 @@ int main()
     }
     
     
-    printf("RAND_MAX:%d, NUM_CHUNK_TYPE:%ld\n", RAND_MAX, NUM_CHUNK_TYPE);
+    //printf("RAND_MAX:%d, NUM_CHUNK_TYPE:%ld\n", RAND_MAX, NUM_CHUNK_TYPE);
     //when i reaches 36244, the system will become stuck,
     //so we set the top val as 20480
-    for(i = 0; i < 10000; i++){
+    for(i = 0; i < 16*1024; i++){
 	//we abandon the malloced memory section directly
 	//and it will be freed by OS after process exits.
 	p = NULL;
-	printf("%d\n",i);
+	if(!(i%256)){
+	    //printf("%d\n",i);
+	}
+	
 	szidx = get_size_index();
 	//printf("szidx: %d\n", szidx);
 
@@ -184,9 +148,6 @@ int main()
 	    printf(/*"size:%8d, time:"*/"%.2f,"
 		   /*"count:%d\n", size[i]*/,log(2+chunks[0][i].val)/*, chunks[0][i].count*/);
     }
-    
-    
-#endif
 
     
     
