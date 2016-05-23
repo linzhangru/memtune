@@ -86,6 +86,7 @@ int free_or_not()
     return rand()%2;
 }
 
+#define ROUND_OF_MALLOC (1*1024) //16*1024
 
 int main()
 {
@@ -104,8 +105,8 @@ int main()
     
     //printf("RAND_MAX:%d, NUM_CHUNK_TYPE:%ld\n", RAND_MAX, NUM_CHUNK_TYPE);
     //when i reaches 36244, the system will become stuck,
-    //so we set the top val as 20480
-    for(i = 0; i < 16*1024; i++){
+    //so we set the top val as 20480    
+    for(i = 0; i < ROUND_OF_MALLOC; i++){
 	//we abandon the malloced memory section directly
 	//and it will be freed by OS after process exits.
 	p = NULL;
@@ -145,7 +146,7 @@ int main()
     }
 
     for(i = 0; i < NUM_CHUNK_TYPE; i++) {
-	    printf(/*"size:%8d, time:"*/"%.2f,"
+	    printf(/*"size:%8d, time:"*/"%5.2f,"
 		   /*"count:%d\n", size[i]*/,log(100*chunks[0][i].val)/*, chunks[0][i].count*/);
     }
 
