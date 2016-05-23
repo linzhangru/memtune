@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
+#include <math.h>
 
 //struct timeval 
 //{
@@ -142,11 +142,13 @@ int main()
     
     
     printf("RAND_MAX:%d, NUM_CHUNK_TYPE:%ld\n", RAND_MAX, NUM_CHUNK_TYPE);
-    for(i = 0; i < 20000; i++){
+    //when i reaches 36244, the system will become stuck,
+    //so we set the top val as 20480
+    for(i = 0; i < 10000; i++){
 	//we abandon the malloced memory section directly
 	//and it will be freed by OS after process exits.
 	p = NULL;
-	
+	printf("%d\n",i);
 	szidx = get_size_index();
 	//printf("szidx: %d\n", szidx);
 
@@ -178,9 +180,9 @@ int main()
 	}
     }
 
-    for(i = 0; i < NUM_CHUNK_TYPE; i++){
-	printf(/*"size:%8d, time:"*/"%8.2f, "
-	       /*"count:%d\n", size[i]*/,chunks[0][i].val/*, chunks[0][i].count*/);
+    for(i = 0; i < NUM_CHUNK_TYPE; i++) {
+	    printf(/*"size:%8d, time:"*/"%.2f,"
+		   /*"count:%d\n", size[i]*/,log(2+chunks[0][i].val)/*, chunks[0][i].count*/);
     }
     
     

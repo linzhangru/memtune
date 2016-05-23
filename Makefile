@@ -13,7 +13,7 @@ export LIBS
 
 CFLAGS   += $(INC_PARAMS)
 CPPFLAGS += $(INC_PARAMS)
-LDFLAGS  += -lc 
+LDFLAGS  += -lc -lm
 
 export CFLAGS
 export CPPFLAGS
