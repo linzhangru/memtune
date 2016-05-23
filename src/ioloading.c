@@ -59,8 +59,9 @@ unsigned long long get_uptime()
     unsigned long long up_sec, up_csec;
     unsigned long long uptime;
     if(!hz){
-	printf("HZ val not yet initialized\n");
-	return -1;
+	//printf("HZ val not yet initialized\n");
+	//return -1;
+	get_hz();
     }
     
     fd = open(UPTIME, O_RDONLY);
