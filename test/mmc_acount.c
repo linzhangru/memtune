@@ -146,7 +146,7 @@ int main()
 
     for(i = 0; i < NUM_CHUNK_TYPE; i++) {
 	    printf(/*"size:%8d, time:"*/"%.2f,"
-		   /*"count:%d\n", size[i]*/,log(2+chunks[0][i].val)/*, chunks[0][i].count*/);
+		   /*"count:%d\n", size[i]*/,log(100*chunks[0][i].val)/*, chunks[0][i].count*/);
     }
 
     
