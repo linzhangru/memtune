@@ -1,9 +1,10 @@
 
 
-x86-all: $(TARGET)
+all: $(TARGET)
 
 
 
+$(info CC:$(CC))
 
 SOURCES := main.c meminfo.c ioloading.c sysctlvm.c
 OBJECTS := $(patsubst %.c,%.o,$(filter %.c,$(SOURCES)))  

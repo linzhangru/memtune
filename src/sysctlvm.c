@@ -54,8 +54,9 @@ int get_vm_data()
 {
     char data[64];
     long val;
+    int i;
 
-    for(int i; i < NR_FDS; i++){
+    for(i = 0; i < NR_FDS; i++){
 	vmfds[i].val = open(vmfds[i].name, O_RDWR);
 	if(vmfds[i].val < 0){
 	    printf("fail to open file %s: %ld\n", vmfds[i].name, vmfds[i].val);
@@ -66,7 +67,7 @@ int get_vm_data()
     //printf("%s all vm files open succeeded\n", __func__);
 
     
-    for(int i; i < NR_FDS; i++){
+    for(i = 0; i < NR_FDS; i++){
 	memset(data, 0, 64);
 	//fscanf(vmfds[i].val, "%d", &val);
 	if(read(vmfds[i].val, data, 64) <= 0){
@@ -77,7 +78,7 @@ int get_vm_data()
 	printf("_%s: %ld\n", vmfds[i].name, val);
     }
 
-    for(int i; i < NR_FDS; i++){    
+    for(i = 0; i < NR_FDS; i++){    
 	if(vmfds[i].val >= 0)
 	    close(vmfds[i].val);
     }
@@ -90,11 +91,11 @@ int get_vm_data()
 int reconfig_vmfds(int choice)
 {
     char data[64];
-    //long val;
+    int i;
     long * newvals = config_val[choice];
     
     //TBD: inject new config datas through sysctl.vm
-    for(int i; i < NR_FDS; i++){
+    for(i = 0; i < NR_FDS; i++){
 	vmfds[i].val = open(vmfds[i].name, O_RDWR);
 	if(vmfds[i].val < 0){
 	    printf("fail to open file %s: %ld\n", vmfds[i].name, vmfds[i].val);
@@ -105,7 +106,7 @@ int reconfig_vmfds(int choice)
     //printf("%s all vm files open succeeded\n", __func__);
 
 
-    for(int i; i < NR_FDS; i++){
+    for(i = 0; i < NR_FDS; i++){
 	memset(data, 0, 64);
 	snprintf(data, sizeof(newvals[i]), "%ld\n", newvals[i]);
 	if(write(vmfds[i].val, data, sizeof(data)) <= 0){
@@ -116,7 +117,7 @@ int reconfig_vmfds(int choice)
     }    
     
 
-    for(int i; i < NR_FDS; i++){    
+    for(i = 0; i < NR_FDS; i++){    
 	if(vmfds[i].val >= 0)
 	    close(vmfds[i].val);
     }
