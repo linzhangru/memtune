@@ -1,1 +1,22 @@
 this is for vm parameters tune dynamically
+=============================================================
+#build the target from src
+>>make
+
+#build the test executable
+>>make test
+
+
+#execute the target program
+>>sudo mma
+
+#execute the test file
+>>./mma.sh
+#this will generate a file named log, the get the estimation data
+#with the command bellow
+>>./esti log
+
+
+#clean the garbage
+>>make clean
+
