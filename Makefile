@@ -25,7 +25,8 @@ else
     ifeq ($(ARCH), arm64)
         CC = /home/zhalin/bin/aarch64-linux-android-4.8/bin/aarch64-linux-android-gcc
         SYSROOT = /home/zhalin/bin/aarch64-linux-android-4.8/sysroot
-        CFLAGS += --sysroot=$(SYSROOT)
+        CFLAGS += --sysroot=$(SYSROOT) -pie -fPIE -static
+	LDFLAGS += -fPIE -pie 
     else
         $(error "unknown architecture")
     endif
@@ -49,9 +50,11 @@ export TARGET
 
 all:
 	make -C ./src all
-
-test:
 	make -C ./test mmc esti
+test:
+	make -C ./test mmc
+esti:
+	make -C ./test esti
 
 clean:
 	find -iname "*.o" | xargs rm -f
