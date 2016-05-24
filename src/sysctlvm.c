@@ -163,7 +163,14 @@ int select_vm_data(int free)
     enum choice_t selection = CHOICE_0;
     int val;
     char data[32];
+#if defined(_X86_)
     int fd = open("selection", O_RDONLY);
+#elif defined(_AARCH64_)
+    int fd = open("/data/selection", O_RDONLY);
+#else
+    #error "not supported architecture"
+#endif
+
     if(fd < 0){
 	printf("fail to open file selection\n");
 	return CHOICE_0;
