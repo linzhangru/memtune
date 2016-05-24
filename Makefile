@@ -46,11 +46,11 @@ all:
 	make -C ./src x86-all
 
 test:
-	make -C ./test mmc
+	make -C ./test mmc esti
 
 clean:
 	find -iname "*.o" | xargs rm -f
 	find -iname "*~"  | xargs rm -f
 	find -iname "cscope*" | xargs rm -rf
 	find -iname "*#*" | xargs rm -rf
-	rm -f $(TARGET) test/mmc
+	rm -f $(TARGET) test/mmc test/esti test/log
