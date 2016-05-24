@@ -75,7 +75,7 @@ int get_vm_data()
 	    return -1;//FIXME: file should be closed before return
 	}
 	sscanf(data, "%ld", &val);
-	printf("_%s: %ld\n", vmfds[i].name, val);
+	printf(">>%s: %ld\n", vmfds[i].name+13, val);
     }
 
     for(i = 0; i < NR_FDS; i++){    

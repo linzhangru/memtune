@@ -134,7 +134,7 @@ int parse_meminfo()
 	    return -1;
 	}
 	sscanf(pline+strlen(meminfo[i].name), "%ld kB.*", &meminfo[i].val);
-	printf("%s %ld\n", meminfo[i].name, meminfo[i].val);
+	//printf("%s %ld\n", meminfo[i].name, meminfo[i].val);
     }
 
     //printf("%s\n", data);
