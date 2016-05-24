@@ -7,6 +7,7 @@
 
 #include "meminfo.h"
 
+#if defined(_X86_)
 struct entry meminfo[SIZE_MEMINFO] = {
     {"MemTotal:",          INVALID_VAL},
     {"MemFree:",           INVALID_VAL},
@@ -54,6 +55,50 @@ struct entry meminfo[SIZE_MEMINFO] = {
     {"DirectMap4k:",       INVALID_VAL},
     {"DirectMap2M:",       INVALID_VAL}
 };
+#elif defined(_AARCH64_)
+struct entry meminfo[SIZE_MEMINFO] = {
+    {"MemTotal:",          INVALID_VAL},
+    {"MemFree:",           INVALID_VAL},
+    {"Buffers:",           INVALID_VAL},
+    {"Cached:",            INVALID_VAL},
+    {"SwapCached:",        INVALID_VAL},
+    {"Active:",            INVALID_VAL},
+    {"Inactive:",          INVALID_VAL},
+    {"Active(anon):",      INVALID_VAL},
+    {"Inactive(anon):",    INVALID_VAL},
+    {"Active(file):",      INVALID_VAL},
+    {"Inactive(file):",    INVALID_VAL},
+    {"Unevictable:",       INVALID_VAL},
+    {"Mlocked:",           INVALID_VAL},
+    {"SwapTotal:",         INVALID_VAL},
+    {"SwapFree:",          INVALID_VAL},
+    {"Dirty:",             INVALID_VAL},
+    {"Writeback:",         INVALID_VAL},
+    {"AnonPages:",         INVALID_VAL},
+    {"Mapped:",            INVALID_VAL},
+    {"Shmem:",             INVALID_VAL},
+    {"Slab:",              INVALID_VAL},
+    {"SReclaimable:",      INVALID_VAL},
+    {"SUnreclaim:",        INVALID_VAL},
+    {"KernelStack:",       INVALID_VAL},
+    {"PageTables:",        INVALID_VAL},
+    {"NFS_Unstable:",      INVALID_VAL},
+    {"Bounce:",            INVALID_VAL},
+    {"WritebackTmp:",      INVALID_VAL},
+    {"CommitLimit:",       INVALID_VAL},
+    {"Committed_AS:",      INVALID_VAL},
+    {"VmallocTotal:",      INVALID_VAL},
+    {"VmallocUsed:",       INVALID_VAL},
+    {"VmallocAlloc:",      INVALID_VAL},
+    {"VmallocChunk:",      INVALID_VAL},
+    {"IonTotal:",          INVALID_VAL},
+    {"IonInUse:",          INVALID_VAL},
+    {"SubTotal:",          INVALID_VAL}
+};
+#else
+#error "not supportted architecture"
+#endif
+
 
 		      
 const int NUM_ENTRY = sizeof(meminfo)/sizeof(struct entry);
@@ -83,14 +128,13 @@ int parse_meminfo()
 
     for(i = 0; i < NUM_ENTRY; i++){
 	pline = NULL;
-	//pline = strstr(data, "MemFree:");
 	pline = strstr(data, meminfo[i].name);
 	if(pline == NULL){
 	    printf("fail to parse MemFree\n");
 	    return -1;
 	}
 	sscanf(pline+strlen(meminfo[i].name), "%ld kB.*", &meminfo[i].val);
-	//printf("%s %ld\n", meminfo[i].name, meminfo[i].val);
+	printf("%s %ld\n", meminfo[i].name, meminfo[i].val);
     }
 
     //printf("%s\n", data);

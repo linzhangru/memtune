@@ -1,4 +1,6 @@
-ARCH ?= x86
+
+#default ARCH
+ARCH ?= arm64
 PWD:=$(shell pwd)
 
 export ARCH
@@ -20,12 +22,13 @@ $(info SYSROOT: $(SYSROOT))
 
 ifeq ($(ARCH), x86)
 CC = gcc
+CFLAGS += -D_X86_
 #select arm64 compiler in else 
 else
     ifeq ($(ARCH), arm64)
         CC = /home/zhalin/bin/aarch64-linux-android-4.8/bin/aarch64-linux-android-gcc
         SYSROOT = /home/zhalin/bin/aarch64-linux-android-4.8/sysroot
-        CFLAGS += --sysroot=$(SYSROOT) -pie -fPIE -static
+        CFLAGS += --sysroot=$(SYSROOT) -pie -fPIE -static -D_AARCH64_
 	LDFLAGS += -fPIE -pie 
     else
         $(error "unknown architecture")
